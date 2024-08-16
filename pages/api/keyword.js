@@ -6,24 +6,34 @@ const openai = new OpenAI({
 
 const extractKeywords = async (text) => {
   const response = await openai.chat.completions.create({
-    model: "gpt-3.5-turbo", // 或者使用 'gpt-4'，取决于你的需求和访问权限
+    model: "gpt-3.5-turbo",
     messages: [
       {
         role: "system",
         content:
-          "你是一个专业的关键词提取助手。请从给定的文本中提取出最重要的关键词。"
+          "You are an AI assistant specialized in analyzing Web3 user search queries. Your task is to extract key information from user queries, including but not limited to: blockchain networks, DApp names, token symbols, transaction types, numerical thresholds, etc. Please return these key pieces of information as an array."
       },
       {
         role: "user",
-        content: `请从以下文本中提取5个最重要的关键词，用逗号分隔：\n\n${text}`
+        content: `Analyze the following Web3 search query and extract key information. Return the results as an array:\n\n${text}`
       }
     ],
-    max_tokens: 60,
+    max_tokens: 150,
     n: 1,
-    temperature: 0.5
+    temperature: 0.3
   })
 
-  return response.choices[0].message.content.trim().split(",")
+  // Parse the returned content as an array
+  const keywordsString = response.choices[0].message.content.trim()
+  let keywords = []
+  try {
+    keywords = JSON.parse(keywordsString)
+  } catch (error) {
+    console.error("Failed to parse keywords:", error)
+    keywords = keywordsString.split(",").map((item) => item.trim())
+  }
+
+  return keywords
 }
 
 export default async function handler(req, res) {
