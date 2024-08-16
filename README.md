@@ -11,23 +11,16 @@ Our tool provides comprehensive analytics of on-chain interactions across any pr
 - **User-Friendly Dashboard:** An intuitive interface that allows users to visualize data through charts, graphs, and other visual tools.
 
 ## Repository
-[GitHub Repository URL](https://github.com/your-repository-url)
+[GitHub Repository URL](https://github.com/chiguayeshao/dapp-forge)
 
 ## Team Members
-- **[JenKin]([https://github.com/your-github-url](https://github.com/Qinsir7))**
-- **[Ethan]([https://github.com/teammate1-github-url](https://github.com/chiguayeshao/dapp-forge))**
-- **[Stanley]([https://github.com/teammate2-github-url](https://github.com/blockma001))**
-- **[Luki]([https://github.com/teammate2-github-url](https://github.com/blockma001))**
-
-## Awards & Recognition
-If your project has participated in other Hackathons or received awards/grants, please provide the details here. For example:
-- **XYZ Hackathon 2023:** Winner of the Best Blockchain Analytics Tool category.
-- **ABC Grant 2024:** Received funding for innovative blockchain data analysis.
+- **JenKin https://github.com/Qinsir7**
+- **Ethan https://github.com/chiguayeshao**
+- **Stanley https://github.com/blockma001**
+- **Luki https://github.com/0xLukin**
 
 ## Deck
 [Link to your presentation deck (PPT)](https://your-deck-url)  
-Alternatively, you can place the deck in this folder.
 
 ## Project Demo
-[Link to the online demo or video recording](https://your-demo-url)  
-Alternatively, you can include a video recording in this folder.
+[Link to the online demo or video recording](https://github.com/chiguayeshao/dapp-forge)  
