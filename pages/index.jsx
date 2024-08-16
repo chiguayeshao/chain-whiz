@@ -9,22 +9,26 @@ import {
   Smile,
   Wrench,
   AlertTriangle,
-  PaperclipIcon,
-  Mic,
-  FileText,
   Sun,
-  Moon
+  Moon,
+  Search,
+  ArrowRight,
+  Loader2
 } from "lucide-react"
 
 const AIAssistant = () => {
   const [searchText, setSearchText] = useState("")
   const [keywords, setKeywords] = useState([])
+  const [selectedKeywords, setSelectedKeywords] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => setMounted(true), [])
 
   const handleSearch = async () => {
+    if (!searchText.trim()) return
+    setIsLoading(true)
     try {
       const response = await fetch("/api/keyword", {
         method: "POST",
@@ -35,9 +39,26 @@ const AIAssistant = () => {
       })
       const data = await response.json()
       setKeywords(data.keywords)
+      setSelectedKeywords([])
     } catch (error) {
       console.error("Error:", error)
+    } finally {
+      setIsLoading(false)
     }
+  }
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch()
+    }
+  }
+
+  const toggleKeyword = (keyword) => {
+    setSelectedKeywords((prev) =>
+      prev.includes(keyword)
+        ? prev.filter((k) => k !== keyword)
+        : [...prev, keyword]
+    )
   }
 
   if (!mounted) return null
@@ -51,11 +72,10 @@ const AIAssistant = () => {
 
       <div className="max-w-4xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <Tabs defaultValue="creative">
+          <Tabs defaultValue="individual">
             <TabsList>
-              <TabsTrigger value="creative">Creative</TabsTrigger>
-              <TabsTrigger value="technical">Technical</TabsTrigger>
-              <TabsTrigger value="precise">Precise</TabsTrigger>
+              <TabsTrigger value="individual">Individual</TabsTrigger>
+              <TabsTrigger value="Business">Business</TabsTrigger>
             </TabsList>
           </Tabs>
           <Button
@@ -80,7 +100,7 @@ const AIAssistant = () => {
           <h1 className="text-2xl font-bold">How can I help you today?</h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <FeatureCard
             icon={<Smile className="w-6 h-6" />}
             title="Examples"
@@ -97,15 +117,6 @@ const AIAssistant = () => {
               "Remembers what user said earlier in the conversation",
               "Allows user to provide follow-up corrections",
               "Trained to decline inappropriate requests"
-            ]}
-          />
-          <FeatureCard
-            icon={<AlertTriangle className="w-6 h-6" />}
-            title="Limitations"
-            items={[
-              "May occasionally generate incorrect information",
-              "May occasionally produce harmful instructions or biased information.",
-              "Limited knowledge of world and events after April 2023"
             ]}
           />
         </div>
@@ -130,45 +141,47 @@ const AIAssistant = () => {
         </div>
 
         <div className="relative mb-6">
-          <Input
-            className="w-full bg-gray-100 dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-700 pl-4 pr-32 py-6"
-            placeholder="Enter a prompt here"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 flex space-x-2">
-            <Button variant="ghost" size="icon">
-              <PaperclipIcon className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <Mic className="w-5 h-5" />
-            </Button>
-            <Button variant="ghost" size="icon">
-              <FileText className="w-5 h-5" />
+          <div className="relative">
+            <Input
+              className="w-full bg-gray-100 dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-700 pl-12 pr-12 py-6 rounded-full"
+              placeholder="Enter a prompt here"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              onKeyPress={handleKeyPress}
+              disabled={isLoading}
+            />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2"
+              onClick={handleSearch}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <ArrowRight className="w-5 h-5" />
+              )}
             </Button>
           </div>
         </div>
 
-        <Button
-          onClick={handleSearch}
-          className="w-full bg-cyan-500 dark:bg-cyan-700 text-white py-2 px-4 rounded-md hover:bg-cyan-600 dark:hover:bg-cyan-800 focus:outline-none focus:ring-2 focus:ring-cyan-500 dark:focus:ring-cyan-700 focus:ring-opacity-50 mb-6"
-        >
-          搜索关键词
-        </Button>
-
         {keywords.length > 0 && (
-          <Card className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700">
-            <CardContent className="p-6">
-              <h2 className="text-lg font-semibold mb-2">提取的关键词:</h2>
-              <ul className="list-disc pl-5">
-                {keywords.map((keyword, index) => (
-                  <li key={index} className="mb-1">
-                    {keyword}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
+          <div className="flex flex-wrap gap-2 mb-6">
+            {keywords.map((keyword, index) => (
+              <Button
+                key={index}
+                variant={
+                  selectedKeywords.includes(keyword) ? "default" : "outline"
+                }
+                className="rounded-full"
+                onClick={() => toggleKeyword(keyword)}
+              >
+                {keyword}
+              </Button>
+            ))}
+          </div>
         )}
       </div>
     </div>
