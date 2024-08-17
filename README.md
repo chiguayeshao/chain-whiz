@@ -1,26 +1,33 @@
-# Blockchain On-Chain Data Analysis Tool
+# ChainWhiz
 
-## Project Overview
-Our tool provides comprehensive analytics of on-chain interactions across any protocol. It enables users to gain deep insights into blockchain activities, helping developers, researchers, and investors make data-driven decisions. Whether it's transaction analysis, user behavior tracking, or smart contract interactions, our tool delivers actionable intelligence directly from the blockchain.
+## 项目概述
+ChainWhiz 是一个由 AI 驱动的聚合数据搜索系统，旨在通过自然语言处理让用户能够轻松探索区块链上的一切数据。
 
-## Core Features
-- **Protocol-Agnostic Analysis:** Analyze data from any blockchain protocol, with seamless integration and support for multiple chains.
-- **Detailed Interaction Tracking:** Track and analyze interactions between wallets, smart contracts, and protocols.
-- **Customizable Data Queries:** Users can create and run custom queries to extract specific data points and generate insights tailored to their needs.
-- **Real-time Data Updates:** Access the latest blockchain data in real-time, ensuring your analysis is always up-to-date.
-- **User-Friendly Dashboard:** An intuitive interface that allows users to visualize data through charts, graphs, and other visual tools.
+我们通过集成高级自然语言处理技术与区块链数据协议，确保能够实时获取最新的链上数据，解决现有AI工具无法提供实时数据、查询门槛高以及用户意图理解不精准的问题。
 
-## Repository
-[GitHub Repository URL](https://github.com/chiguayeshao/dapp-forge)
+## 核心功能
+- **高级自然语言处理**：通过ChatGPT集成的NLP技术，实现对用户意图的精准理解和高效的数据查询。
+- **多平台兼容**：接入多种区块链数据协议（如Dune、Nansen、Subgraph、Footprint），确保实时处理并聚合来自不同平台的数据。
+- **用户友好设计**：无需专业知识，用户可以通过简洁的界面输入自然语言查询，系统自动将其翻译为具体的数据请求。
+- **实时数据更新**：确保用户获取的区块链数据始终是最新、最准确的。
 
-## Team Members
-- **JenKin https://github.com/Qinsir7**
-- **Ethan https://github.com/chiguayeshao**
-- **Stanley https://github.com/blockma001**
-- **Luki https://github.com/0xLukin**
+## 代码仓库地址
+[GitHub Repository](https://github.com/chiguayeshao/data-drop)
+
+## 团队成员
+- **成员1** - [Ethan](https://github.com/chiguayeshao)
+- **成员2** - [JenKin](https://github.com/Qinsir7)
+- **成员3** - [Luki](https://github.com/0xLukin)
+- **成员4** - [Stanley](https://github.com/blockma001)
+
+## 历史获奖说明
+无历史获奖
 
 ## Deck
-[Link to your presentation deck (PPT)](https://your-deck-url)  
+直接查看文件夹内的 `Deck.pptx`。
 
-## Project Demo
-[Link to the online demo or video recording](https://github.com/chiguayeshao/dapp-forge)  
+## 项目演示
+直接查看文件夹内的 `ChainWhiz.mp4`。
+
+## 项目官网
+https://web3-data-drop.vercel.app/
