@@ -20,6 +20,7 @@ const AIAssistant = () => {
   const [searchText, setSearchText] = useState("")
   const [keywords, setKeywords] = useState([])
   const [selectedKeywords, setSelectedKeywords] = useState([])
+  const [suggestions, setSuggestions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -39,6 +40,7 @@ const AIAssistant = () => {
       })
       const data = await response.json()
       setKeywords(data.keywords)
+      setSuggestions(data.suggestions)
       setSelectedKeywords([])
     } catch (error) {
       console.error("Error:", error)
@@ -121,23 +123,15 @@ const AIAssistant = () => {
           />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <SuggestionButton
-            text="Create a blog post about NextUI"
-            subtext="explain it in simple terms"
-          />
-          <SuggestionButton
-            text="Give me 10 ideas for my next blog post"
-            subtext="include only the best ideas"
-          />
-          <SuggestionButton
-            text="Compare NextUI with other UI libraries"
-            subtext="be as objective as possible"
-          />
-          <SuggestionButton
-            text="Write a text message to my friend"
-            subtext="be polite and friendly"
-          />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+          {suggestions.map((suggestion, index) => (
+            <SuggestionButton
+              key={index}
+              text={suggestion.description}
+              subtext={suggestion.dimension}
+              newKeywords={suggestion.newKeywords}
+            />
+          ))}
         </div>
 
         <div className="relative mb-6">
@@ -209,7 +203,7 @@ const FeatureCard = ({ icon, title, items }) => (
   </Card>
 )
 
-const SuggestionButton = ({ text, subtext }) => (
+const SuggestionButton = ({ text, subtext, newKeywords }) => (
   <Button
     variant="outline"
     className="h-auto py-2 px-4 justify-start text-left"
@@ -217,6 +211,11 @@ const SuggestionButton = ({ text, subtext }) => (
     <div>
       <div className="font-medium">{text}</div>
       <div className="text-xs text-gray-500 dark:text-gray-400">{subtext}</div>
+      {newKeywords && newKeywords.length > 0 && (
+        <div className="text-xs text-blue-500 mt-1">
+          新增关键词: {newKeywords.join(", ")}
+        </div>
+      )}
     </div>
   </Button>
 )
