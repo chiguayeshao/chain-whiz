@@ -27,8 +27,8 @@ const AIAssistant = () => {
 
   useEffect(() => setMounted(true), [])
 
-  const handleSearch = async () => {
-    if (!searchText.trim()) return
+  const handleSearch = async (text = searchText) => {
+    if (!text.trim()) return
     setIsLoading(true)
     try {
       const response = await fetch("/api/keyword", {
@@ -36,7 +36,7 @@ const AIAssistant = () => {
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ text: searchText })
+        body: JSON.stringify({ text: text })
       })
       const data = await response.json()
       setKeywords(data.keywords)
@@ -61,6 +61,11 @@ const AIAssistant = () => {
         ? prev.filter((k) => k !== keyword)
         : [...prev, keyword]
     )
+  }
+
+  const handleSuggestionClick = (suggestion) => {
+    setSearchText(suggestion.description)
+    handleSearch(suggestion.description)
   }
 
   if (!mounted) return null
@@ -130,6 +135,7 @@ const AIAssistant = () => {
               text={suggestion.description}
               subtext={suggestion.dimension}
               newKeywords={suggestion.newKeywords}
+              onClick={() => handleSuggestionClick(suggestion)}
             />
           ))}
         </div>
@@ -149,7 +155,7 @@ const AIAssistant = () => {
               variant="ghost"
               size="icon"
               className="absolute right-2 top-1/2 transform -translate-y-1/2"
-              onClick={handleSearch}
+              onClick={() => handleSearch()}
               disabled={isLoading}
             >
               {isLoading ? (
@@ -203,10 +209,11 @@ const FeatureCard = ({ icon, title, items }) => (
   </Card>
 )
 
-const SuggestionButton = ({ text, subtext, newKeywords }) => (
+const SuggestionButton = ({ text, subtext, newKeywords, onClick }) => (
   <Button
     variant="outline"
     className="h-auto py-2 px-4 justify-start text-left"
+    onClick={onClick}
   >
     <div>
       <div className="font-medium">{text}</div>
