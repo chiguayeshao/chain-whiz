@@ -224,62 +224,87 @@ const AIAssistant = () => {
   )
 }
 
-const FeatureCard = ({ icon, title, items }) => (
-  <Card className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700">
-    <CardContent className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center">
-          {icon}
-          <h2 className="text-lg font-semibold ml-2">{title}</h2>
+const FeatureCard = ({ icon, title, items }) => {
+  const downloadCSV = () => {
+    const headers = ["Transaction", "Sender", "Amount"]
+    const csvContent = [
+      headers.join(","),
+      ...items.map(
+        (swap) =>
+          `${swap.transaction.id},${swap.sender},${parseFloat(swap.amountUSD).toFixed(2)}`
+      )
+    ].join("\n")
+
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
+    const link = document.createElement("a")
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob)
+      link.setAttribute("href", url)
+      link.setAttribute("download", "swap_data.csv")
+      link.style.visibility = "hidden"
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
+  }
+
+  return (
+    <Card className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center">
+            {icon}
+            <h2 className="text-lg font-semibold ml-2">{title}</h2>
+          </div>
+          <Button variant="ghost" size="icon" onClick={downloadCSV}>
+            <Download className="h-4 w-4" />
+          </Button>
         </div>
-        <Button variant="ghost" size="icon">
-          <Download className="h-4 w-4" />
-        </Button>
-      </div>
-      <div className="max-h-96 overflow-y-auto pr-2">
-        <ul className="space-y-4">
-          {items.map((swap, index) => (
-            <li
-              key={index}
-              className="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg text-sm"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-semibold">Transaction:</span>
-                <a
-                  href={`https://etherscan.io/tx/${swap.transaction.id}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:text-blue-700 flex items-center"
-                >
-                  {`${swap.transaction.id.slice(0, 5)}...${swap.transaction.id.slice(-5)}`}
-                  <ExternalLink className="w-4 h-4 ml-1" />
-                </a>
-              </div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-semibold">Sender:</span>
-                <a
-                  href={`https://etherscan.io/address/${swap.sender}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 hover:text-blue-700 flex items-center"
-                >
-                  {`${swap.sender.slice(0, 5)}...${swap.sender.slice(-5)}`}
-                  <ExternalLink className="w-4 h-4 ml-1" />
-                </a>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="font-semibold">Amount:</span>
-                <span className="text-green-500">
-                  ${parseFloat(swap.amountUSD).toFixed(2)}
-                </span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </CardContent>
-  </Card>
-)
+        <div className="max-h-96 overflow-y-auto pr-2">
+          <ul className="space-y-4">
+            {items.map((swap, index) => (
+              <li
+                key={index}
+                className="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg text-sm"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold">Transaction:</span>
+                  <a
+                    href={`https://etherscan.io/tx/${swap.transaction.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:text-blue-700 flex items-center"
+                  >
+                    {`${swap.transaction.id.slice(0, 5)}...${swap.transaction.id.slice(-5)}`}
+                    <ExternalLink className="w-4 h-4 ml-1" />
+                  </a>
+                </div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold">Sender:</span>
+                  <a
+                    href={`https://etherscan.io/address/${swap.sender}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:text-blue-700 flex items-center"
+                  >
+                    {`${swap.sender.slice(0, 5)}...${swap.sender.slice(-5)}`}
+                    <ExternalLink className="w-4 h-4 ml-1" />
+                  </a>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">Amount:</span>
+                  <span className="text-green-500">
+                    ${parseFloat(swap.amountUSD).toFixed(2)}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
 const SuggestionButton = ({ text, subtext, newKeywords, onClick }) => (
   <Button
