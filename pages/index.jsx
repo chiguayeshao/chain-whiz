@@ -133,7 +133,7 @@ const AIAssistant = () => {
   return (
     <div className="min-h-screen bg-white dark:bg-[#19191C] text-black dark:text-white p-8 transition-colors duration-200">
       <Head>
-        <title>AI Assistant with Keyword Search and Swap Data</title>
+        <title>The first AI-driven aggregation gateway.</title>
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
