@@ -14,7 +14,9 @@ import {
   Search,
   ArrowRight,
   Loader2,
-  DollarSign
+  DollarSign,
+  ExternalLink,
+  Download
 } from "lucide-react"
 
 const AIAssistant = () => {
@@ -213,11 +215,8 @@ const AIAssistant = () => {
         {swapData.length > 0 && (
           <FeatureCard
             icon={<DollarSign className="w-6 h-6" />}
-            title="Recent Large Swaps"
-            items={swapData.map(
-              (swap) =>
-                `Token: ${swap.tokenSymbol} | Transaction: ${swap.transaction.id.slice(0, 10)}... | Sender: ${swap.sender.slice(0, 10)}... | Amount: $${parseFloat(swap.amountUSD).toFixed(2)} | Time: ${new Date(parseInt(swap.timestamp) * 1000).toLocaleString()}`
-            )}
+            title="Data"
+            items={swapData}
           />
         )}
       </div>
@@ -228,20 +227,56 @@ const AIAssistant = () => {
 const FeatureCard = ({ icon, title, items }) => (
   <Card className="bg-gray-100 dark:bg-gray-800 border-gray-300 dark:border-gray-700">
     <CardContent className="p-6">
-      <div className="flex items-center mb-4">
-        {icon}
-        <h2 className="text-lg font-semibold ml-2">{title}</h2>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center">
+          {icon}
+          <h2 className="text-lg font-semibold ml-2">{title}</h2>
+        </div>
+        <Button variant="ghost" size="icon">
+          <Download className="h-4 w-4" />
+        </Button>
       </div>
-      <ul className="space-y-2">
-        {items.map((item, index) => (
-          <li
-            key={index}
-            className="bg-gray-200 dark:bg-gray-700 p-2 rounded text-sm"
-          >
-            {item}
-          </li>
-        ))}
-      </ul>
+      <div className="max-h-96 overflow-y-auto pr-2">
+        <ul className="space-y-4">
+          {items.map((swap, index) => (
+            <li
+              key={index}
+              className="bg-gray-200 dark:bg-gray-700 p-4 rounded-lg text-sm"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-semibold">Transaction:</span>
+                <a
+                  href={`https://etherscan.io/tx/${swap.transaction.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:text-blue-700 flex items-center"
+                >
+                  {`${swap.transaction.id.slice(0, 5)}...${swap.transaction.id.slice(-5)}`}
+                  <ExternalLink className="w-4 h-4 ml-1" />
+                </a>
+              </div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-semibold">Sender:</span>
+                <a
+                  href={`https://etherscan.io/address/${swap.sender}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:text-blue-700 flex items-center"
+                >
+                  {`${swap.sender.slice(0, 5)}...${swap.sender.slice(-5)}`}
+                  <ExternalLink className="w-4 h-4 ml-1" />
+                </a>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-semibold">Amount:</span>
+                <span className="text-green-500">
+                  ${parseFloat(swap.amountUSD).toFixed(2)}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
     </CardContent>
   </Card>
 )
