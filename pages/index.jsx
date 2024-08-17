@@ -28,7 +28,9 @@ import {
 } from "lucide-react"
 
 const AIAssistant = () => {
-  const [searchText, setSearchText] = useState("")
+  const [searchText, setSearchText] = useState(
+    "Find the latest 10 swap transactions exceeding $1 million"
+  )
   const [keywords, setKeywords] = useState([])
   const [selectedKeywords, setSelectedKeywords] = useState([])
   const [suggestions, setSuggestions] = useState([])
