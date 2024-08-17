@@ -390,7 +390,7 @@ const SuggestionButton = ({ text, subtext, newKeywords, onClick }) => (
       <div className="text-xs text-gray-500 dark:text-gray-400">{subtext}</div>
       {newKeywords && newKeywords.length > 0 && (
         <div className="text-xs text-blue-500 mt-1">
-          新增关键词: {newKeywords.join(", ")}
+          New keyword: {newKeywords.join(", ")}
         </div>
       )}
     </div>
