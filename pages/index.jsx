@@ -159,9 +159,9 @@ const AIAssistant = () => {
         <div className="text-center mb-8">
           <div className="mb-4 flex items-center justify-center">
             <Image
-              src="/logo.jpg"
-              width={52}
-              height={52}
+              src="/logo.png"
+              width={88}
+              height={88}
               alt="Company Logo"
               className="rounded-[15px]"
             />
@@ -210,13 +210,58 @@ const AIAssistant = () => {
             </Button>
           </div>
           <Select value={selectedOption} onValueChange={setSelectedOption}>
-            <SelectTrigger className="w-[180px] bg-gray-100 dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-700 rounded-full py-6">
+            <SelectTrigger className="w-[220px] bg-gray-100 dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-700 rounded-full py-6">
               <SelectValue placeholder="Select option" />
             </SelectTrigger>
             <SelectContent className="bg-gray-100 dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-700">
-              <SelectItem value="option1">Option 1</SelectItem>
-              <SelectItem value="option2">Option 2</SelectItem>
-              <SelectItem value="option3">Option 3</SelectItem>
+              <SelectItem value="option1">
+                <div className="flex items-center">
+                  <Image
+                    src="/thegraph.png"
+                    width={24}
+                    height={24}
+                    alt="Logo 1"
+                    className="mr-2 rounded-full"
+                  />
+                  <span>The Graph</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="option2" disabled>
+                <div className="flex items-center">
+                  <Image
+                    src="/dune.png"
+                    width={24}
+                    height={24}
+                    alt="Logo 2"
+                    className="mr-2 rounded-full"
+                  />
+                  <span>Dune</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="option3" disabled>
+                <div className="flex items-center">
+                  <Image
+                    src="/nansen.png"
+                    width={24}
+                    height={24}
+                    alt="Logo 3"
+                    className="mr-2 rounded-full"
+                  />
+                  <span>Nansen</span>
+                </div>
+              </SelectItem>
+              <SelectItem value="option4" disabled>
+                <div className="flex items-center">
+                  <Image
+                    src="/footprint.png"
+                    width={24}
+                    height={24}
+                    alt="Logo 3"
+                    className="mr-2 rounded-full"
+                  />
+                  <span>Footprint</span>
+                </div>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
