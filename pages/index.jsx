@@ -172,7 +172,7 @@ const AIAssistant = () => {
           <div className="relative">
             <Input
               className="w-full bg-gray-100 dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-700 pl-12 pr-12 py-6 rounded-full"
-              placeholder="例如：查询swap超过100万美金的最近10笔交易"
+              placeholder="Find the latest 10 swap transactions exceeding $1 million"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               onKeyPress={handleKeyPress}
