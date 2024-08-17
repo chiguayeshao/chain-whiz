@@ -13,7 +13,8 @@ import {
   Moon,
   Search,
   ArrowRight,
-  Loader2
+  Loader2,
+  DollarSign
 } from "lucide-react"
 
 const AIAssistant = () => {
@@ -22,6 +23,7 @@ const AIAssistant = () => {
   const [selectedKeywords, setSelectedKeywords] = useState([])
   const [suggestions, setSuggestions] = useState([])
   const [isLoading, setIsLoading] = useState(false)
+  const [swapData, setSwapData] = useState([])
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
@@ -31,17 +33,47 @@ const AIAssistant = () => {
     if (!text.trim()) return
     setIsLoading(true)
     try {
-      const response = await fetch("/api/keyword", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ text: text })
-      })
-      const data = await response.json()
-      setKeywords(data.keywords)
-      setSuggestions(data.suggestions)
-      setSelectedKeywords([])
+      // Parse user input
+      const amountMatch = text.match(/(\d+)万美金/)
+      const countMatch = text.match(/(\d+)笔/)
+
+      const amount = amountMatch ? parseInt(amountMatch[1]) * 10000 : 1000000 // Default to 1 million if not specified
+      const count = countMatch ? parseInt(countMatch[1]) : 10 // Default to 10 if not specified
+
+      // Construct GraphQL query
+      const query = `
+        {
+          swaps(
+            first: ${count}, 
+            orderBy: timestamp, 
+            orderDirection: desc, 
+            where: { 
+              amountUSD_gt: "${amount}"
+            }
+          ) {
+            id
+            transaction { id }
+            sender
+            amountUSD
+          }
+        }
+      `
+
+      const graphResponse = await fetch(
+        `https://gateway.thegraph.com/api/${process.env.NEXT_PUBLIC_THE_GRAPH_API_KEY}/subgraphs/id/HUZDsRpEVP2AvzDCyzDHtdc64dyDxx8FQjzsmqSg4H3B`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ query })
+        }
+      )
+      const graphData = await graphResponse.json()
+      setSwapData(graphData.data.swaps)
+
+      // Set keywords for display
+      setKeywords([`${amount / 10000}万美金`, `${count}笔交易`])
     } catch (error) {
       console.error("Error:", error)
     } finally {
@@ -63,17 +95,12 @@ const AIAssistant = () => {
     )
   }
 
-  const handleSuggestionClick = (suggestion) => {
-    setSearchText(suggestion.description)
-    handleSearch(suggestion.description)
-  }
-
   if (!mounted) return null
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#19191C] text-black dark:text-white p-8 transition-colors duration-200">
       <Head>
-        <title>AI Assistant with Keyword Search</title>
+        <title>AI Assistant with Dynamic Swap Data Query</title>
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
@@ -107,44 +134,11 @@ const AIAssistant = () => {
           <h1 className="text-2xl font-bold">How can I help you today?</h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-          <FeatureCard
-            icon={<Smile className="w-6 h-6" />}
-            title="Examples"
-            items={[
-              "Explain quantum computing in simple terms",
-              "Got any creative ideas for a 10 year old' birthday?",
-              "How do I make an HTTP request in Javascript?"
-            ]}
-          />
-          <FeatureCard
-            icon={<Wrench className="w-6 h-6" />}
-            title="Capabilities"
-            items={[
-              "Remembers what user said earlier in the conversation",
-              "Allows user to provide follow-up corrections",
-              "Trained to decline inappropriate requests"
-            ]}
-          />
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-          {suggestions.map((suggestion, index) => (
-            <SuggestionButton
-              key={index}
-              text={suggestion.description}
-              subtext={suggestion.dimension}
-              newKeywords={suggestion.newKeywords}
-              onClick={() => handleSuggestionClick(suggestion)}
-            />
-          ))}
-        </div>
-
         <div className="relative mb-6">
           <div className="relative">
             <Input
               className="w-full bg-gray-100 dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-700 pl-12 pr-12 py-6 rounded-full"
-              placeholder="Enter a prompt here"
+              placeholder="例如：查询swap超过100万美金的最近10笔交易"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
               onKeyPress={handleKeyPress}
@@ -183,6 +177,17 @@ const AIAssistant = () => {
             ))}
           </div>
         )}
+
+        {swapData.length > 0 && (
+          <FeatureCard
+            icon={<DollarSign className="w-6 h-6" />}
+            title="Swap Transactions"
+            items={swapData.map(
+              (swap) =>
+                `Token: ${swap.tokenSymbol} | Transaction: ${swap.transaction.id.slice(0, 10)}... | Sender: ${swap.sender.slice(0, 10)}... | Amount: $${parseFloat(swap.amountUSD).toFixed(2)} | Time: ${new Date(parseInt(swap.timestamp) * 1000).toLocaleString()}`
+            )}
+          />
+        )}
       </div>
     </div>
   )
@@ -207,24 +212,6 @@ const FeatureCard = ({ icon, title, items }) => (
       </ul>
     </CardContent>
   </Card>
-)
-
-const SuggestionButton = ({ text, subtext, newKeywords, onClick }) => (
-  <Button
-    variant="outline"
-    className="h-auto py-2 px-4 justify-start text-left"
-    onClick={onClick}
-  >
-    <div>
-      <div className="font-medium">{text}</div>
-      <div className="text-xs text-gray-500 dark:text-gray-400">{subtext}</div>
-      {newKeywords && newKeywords.length > 0 && (
-        <div className="text-xs text-blue-500 mt-1">
-          新增关键词: {newKeywords.join(", ")}
-        </div>
-      )}
-    </div>
-  </Button>
 )
 
 export default AIAssistant
