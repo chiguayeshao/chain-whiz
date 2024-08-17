@@ -146,7 +146,7 @@ const AIAssistant = () => {
               <TabsTrigger value="Business">Business</TabsTrigger>
             </TabsList>
           </Tabs>
-          <div className="flex flex-row gap-4">
+          <div className="flex flex-row gap-4 items-center justify-center">
             <ConnectButton />
             <Button
               variant="outline"
