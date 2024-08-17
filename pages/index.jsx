@@ -5,6 +5,14 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import Image from "next/image"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
 import {
   Smile,
   Wrench,
@@ -28,6 +36,7 @@ const AIAssistant = () => {
   const [swapData, setSwapData] = useState([])
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
+  const [selectedOption, setSelectedOption] = useState("option1")
 
   useEffect(() => setMounted(true), [])
 
@@ -148,12 +157,19 @@ const AIAssistant = () => {
         </div>
 
         <div className="text-center mb-8">
-          <div className="inline-block bg-pink-200 dark:bg-pink-800 rounded-full p-2 mb-4">
-            <div className="w-16 h-16 bg-blue-300 dark:bg-blue-700 rounded-full flex items-center justify-center">
-              <span className="text-4xl">😊</span>
-            </div>
+          <div className="mb-4 flex items-center justify-center">
+            <Image
+              src="/logo.jpg"
+              width={52}
+              height={52}
+              alt="Company Logo"
+              className="rounded-[15px]"
+            />
           </div>
-          <h1 className="text-2xl font-bold">How can I help you today?</h1>
+          <h1 className="text-2xl font-bold">
+            The first AI-driven aggregation gateway that empowers effortless
+            natural language exploration of everything on-chain.
+          </h1>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
@@ -168,8 +184,8 @@ const AIAssistant = () => {
           ))}
         </div>
 
-        <div className="relative mb-6">
-          <div className="relative">
+        <div className="relative mb-6 flex items-center space-x-2">
+          <div className="relative flex-grow">
             <Input
               className="w-full bg-gray-100 dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-700 pl-12 pr-12 py-6 rounded-full"
               placeholder="Find the latest 10 swap transactions exceeding $1 million"
@@ -193,6 +209,16 @@ const AIAssistant = () => {
               )}
             </Button>
           </div>
+          <Select value={selectedOption} onValueChange={setSelectedOption}>
+            <SelectTrigger className="w-[180px] bg-gray-100 dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-700 rounded-full py-6">
+              <SelectValue placeholder="Select option" />
+            </SelectTrigger>
+            <SelectContent className="bg-gray-100 dark:bg-gray-800 text-black dark:text-white border-gray-300 dark:border-gray-700">
+              <SelectItem value="option1">Option 1</SelectItem>
+              <SelectItem value="option2">Option 2</SelectItem>
+              <SelectItem value="option3">Option 3</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {keywords.length > 0 && (
