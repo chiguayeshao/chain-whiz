@@ -33,14 +33,32 @@ const AIAssistant = () => {
     if (!text.trim()) return
     setIsLoading(true)
     try {
-      // Parse user input
+      // Keyword search
+      const keywordResponse = await fetch("/api/keyword", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ text: text })
+      })
+      const keywordData = await keywordResponse.json()
+      setKeywords(keywordData.keywords)
+      setSuggestions(keywordData.suggestions)
+      setSelectedKeywords([])
+
+      // Parse user input for amount and count
       const amountMatch = text.match(/(\d+)万美金/)
       const countMatch = text.match(/(\d+)笔/)
 
       const amount = amountMatch ? parseInt(amountMatch[1]) * 10000 : 1000000 // Default to 1 million if not specified
-      const count = countMatch ? parseInt(countMatch[1]) : 10 // Default to 10 if not specified
+      const count = countMatch ? parseInt(countMatch[1]) : 5 // Default to 5 if not specified
 
-      // Construct GraphQL query
+      // Construct GraphQL query based on keywords and parsed values
+      const queryKeywords = keywordData.keywords.slice(0, 3) // Using first 3 keywords
+      const whereConditions = queryKeywords
+        .map((keyword) => `{tokenSymbol_contains_nocase: "${keyword}"}`)
+        .join(", ")
+
       const query = `
         {
           swaps(
@@ -48,7 +66,7 @@ const AIAssistant = () => {
             orderBy: timestamp, 
             orderDirection: desc, 
             where: { 
-              amountUSD_gt: "${amount}"
+              amountUSD_gt: "${amount}",
             }
           ) {
             id
@@ -71,9 +89,6 @@ const AIAssistant = () => {
       )
       const graphData = await graphResponse.json()
       setSwapData(graphData.data.swaps)
-
-      // Set keywords for display
-      setKeywords([`${amount / 10000}万美金`, `${count}笔交易`])
     } catch (error) {
       console.error("Error:", error)
     } finally {
@@ -95,12 +110,17 @@ const AIAssistant = () => {
     )
   }
 
+  const handleSuggestionClick = (suggestion) => {
+    setSearchText(suggestion.description)
+    handleSearch(suggestion.description)
+  }
+
   if (!mounted) return null
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#19191C] text-black dark:text-white p-8 transition-colors duration-200">
       <Head>
-        <title>AI Assistant with Dynamic Swap Data Query</title>
+        <title>AI Assistant with Keyword Search and Swap Data</title>
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
@@ -132,6 +152,18 @@ const AIAssistant = () => {
             </div>
           </div>
           <h1 className="text-2xl font-bold">How can I help you today?</h1>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+          {suggestions.map((suggestion, index) => (
+            <SuggestionButton
+              key={index}
+              text={suggestion.description}
+              subtext={suggestion.dimension}
+              newKeywords={suggestion.newKeywords}
+              onClick={() => handleSuggestionClick(suggestion)}
+            />
+          ))}
         </div>
 
         <div className="relative mb-6">
@@ -181,7 +213,7 @@ const AIAssistant = () => {
         {swapData.length > 0 && (
           <FeatureCard
             icon={<DollarSign className="w-6 h-6" />}
-            title="Swap Transactions"
+            title="Recent Large Swaps"
             items={swapData.map(
               (swap) =>
                 `Token: ${swap.tokenSymbol} | Transaction: ${swap.transaction.id.slice(0, 10)}... | Sender: ${swap.sender.slice(0, 10)}... | Amount: $${parseFloat(swap.amountUSD).toFixed(2)} | Time: ${new Date(parseInt(swap.timestamp) * 1000).toLocaleString()}`
@@ -212,6 +244,24 @@ const FeatureCard = ({ icon, title, items }) => (
       </ul>
     </CardContent>
   </Card>
+)
+
+const SuggestionButton = ({ text, subtext, newKeywords, onClick }) => (
+  <Button
+    variant="outline"
+    className="h-auto py-2 px-4 justify-start text-left"
+    onClick={onClick}
+  >
+    <div>
+      <div className="font-medium">{text}</div>
+      <div className="text-xs text-gray-500 dark:text-gray-400">{subtext}</div>
+      {newKeywords && newKeywords.length > 0 && (
+        <div className="text-xs text-blue-500 mt-1">
+          新增关键词: {newKeywords.join(", ")}
+        </div>
+      )}
+    </div>
+  </Button>
 )
 
 export default AIAssistant
