@@ -26,6 +26,7 @@ import {
   ExternalLink,
   Download
 } from "lucide-react"
+import { ConnectButton } from "@rainbow-me/rainbowkit"
 
 const AIAssistant = () => {
   const [searchText, setSearchText] = useState(
@@ -145,17 +146,20 @@ const AIAssistant = () => {
               <TabsTrigger value="Business">Business</TabsTrigger>
             </TabsList>
           </Tabs>
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          >
-            {theme === "dark" ? (
-              <Sun className="h-[1.2rem] w-[1.2rem]" />
-            ) : (
-              <Moon className="h-[1.2rem] w-[1.2rem]" />
-            )}
-          </Button>
+          <div className="flex flex-row gap-4">
+            <ConnectButton />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              {theme === "dark" ? (
+                <Sun className="h-[1.2rem] w-[1.2rem]" />
+              ) : (
+                <Moon className="h-[1.2rem] w-[1.2rem]" />
+              )}
+            </Button>
+          </div>
         </div>
 
         <div className="text-center mb-8">
@@ -285,13 +289,7 @@ const AIAssistant = () => {
           </div>
         )}
 
-        {swapData.length > 0 && (
-          <FeatureCard
-            icon={<DollarSign className="w-6 h-6" />}
-            title="Data"
-            items={swapData}
-          />
-        )}
+        {swapData.length > 0 && <FeatureCard title="Data" items={swapData} />}
       </div>
     </div>
   )
