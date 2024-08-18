@@ -30,7 +30,7 @@ import { ConnectButton } from "@rainbow-me/rainbowkit"
 
 const AIAssistant = () => {
   const [searchText, setSearchText] = useState(
-    "Find the latest 10 swap transactions exceeding $1 million"
+    "Find the latest 10 transactions exceeding $1 million on uniswap"
   )
   const [keywords, setKeywords] = useState([])
   const [selectedKeywords, setSelectedKeywords] = useState([])
@@ -60,12 +60,21 @@ const AIAssistant = () => {
       setSuggestions(keywordData.suggestions)
       setSelectedKeywords([])
 
-      // Parse user input for amount and count
-      const amountMatch = text.match(/(\d+)万美金/)
-      const countMatch = text.match(/(\d+)笔/)
+      // 匹配金额和交易笔数
+      const amountMatch = text.match(/(\d+)\s*million|(\d+)\s*万美金/)
+      const countMatch = text.match(/(\d+)\s*transactions|(\d+)\s*笔/)
 
-      const amount = amountMatch ? parseInt(amountMatch[1]) * 10000 : 1000000 // Default to 1 million if not specified
-      const count = countMatch ? parseInt(countMatch[1]) : 5 // Default to 5 if not specified
+      // 处理金额和交易笔数
+      const amount = amountMatch
+        ? amountMatch[1]
+          ? parseInt(amountMatch[1]) * 1000000
+          : 1000000
+        : 1000000 // 默认值为 1 million
+      const count = countMatch
+        ? countMatch[1]
+          ? parseInt(countMatch[1])
+          : 5
+        : 5 // 默认值为 5
 
       // Construct GraphQL query based on keywords and parsed values
       const queryKeywords = keywordData.keywords.slice(0, 3) // Using first 3 keywords
